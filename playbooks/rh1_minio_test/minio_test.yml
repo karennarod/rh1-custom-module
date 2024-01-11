@@ -1,25 +1,62 @@
 ---
+# code: language=ansible
 - name: Testing Bucket Creation & Removal
   hosts: localhost
+  vars:
+    bucket_name: "ansible-test"
+    object_name: "test-file-object"
   tasks:
-
-    - name: Create bucket
-      bucket:
-        name: "ansible-test"
+    #### Creating a bucket
+    - name: Create a bucket
+      rh1.minio.bucket:
+        name: "{{ bucket_name }}"
         state: present
-
-    - name: Create file object
-      object:
-        bucket: "ansible-test"
-        object: "test-file-object"
+    
+    - name: Print info
+      ansible.builtin.debug:
+        msg: "Bucket {{ bucket_name }} created"
+    
+    #### Creating an object
+    - name: Create a file object in the new bucket
+      rh1.minio.object:
+        bucket: "{{ bucket_name }}"
+        object: "{{ object_name }}"
         src: hello_world.txt
         mode: fput
 
-    - name: Get file object
-      object:
-        bucket: "ansible-test"
-        object: "test-file-object"
+    - name: Print info
+      ansible.builtin.debug:
+        msg: "Object {{ object_name }} created in bucket {{ bucket_name }}"
+
+    #### Downloading an object
+    - name: Download a file object
+      rh1.minio.object:
+        bucket: "{{ bucket_name }}"
+        object: "{{ object_name }}"
         dest: "download_hello_world.txt"
         mode: fget
 
-...
+    - name: Print info
+      ansible.builtin.debug:
+        msg: "Object {{ object_name }} downloaded from bucket {{ bucket_name }} to destination ./fresh_download_hello_world.txt"
+
+    #### Removing an object
+    - name: Remove a file object
+      rh1.minio.bucket:
+        name: "{{ bucket_name }}"
+        object: "{{ object_name }}"
+        mode: 
+
+    - name: Print info
+      ansible.builtin.debug:
+        msg: "Object {{ object_name }} removed from bucket {{ bucket_name }}"
+    
+    #### Deleting a bucket
+    - name: Delete a bucket
+      rh1.minio.bucket:
+        name: "{{ bucket_name }}"
+        state: absent
+
+    - name: Print info
+      ansible.builtin.debug:
+        msg: "Bucket {{ bucket_name }} deleted"
