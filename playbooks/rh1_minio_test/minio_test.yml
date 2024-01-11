@@ -33,7 +33,7 @@
       rh1.minio.object:
         bucket: "{{ bucket_name }}"
         object: "{{ object_name }}"
-        dest: "download_hello_world.txt"
+        dest: "fresh_download_hello_world.txt"
         mode: fget
 
     - name: Print info
