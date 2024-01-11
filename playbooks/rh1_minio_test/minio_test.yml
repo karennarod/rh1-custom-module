@@ -1,0 +1,25 @@
+---
+- name: Testing Bucket Creation & Removal
+  hosts: localhost
+  tasks:
+
+    - name: Create bucket
+      bucket:
+        name: "ansible-test"
+        state: present
+
+    - name: Create file object
+      object:
+        bucket: "ansible-test"
+        object: "test-file-object"
+        src: hello_world.txt
+        mode: fput
+
+    - name: Get file object
+      object:
+        bucket: "ansible-test"
+        object: "test-file-object"
+        dest: "download_hello_world.txt"
+        mode: fget
+
+...
