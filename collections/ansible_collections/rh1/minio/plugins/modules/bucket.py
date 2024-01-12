@@ -73,12 +73,7 @@ message:
 
 from ansible.module_utils.basic import AnsibleModule
 
-client = Minio("play.min.io",
-    access_key="Q3AM3UQ867SPQQA43P2F",
-    secret_key="zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
-)
-
-def make_bucket(name, location, object_lock):
+def make_bucket(client, name, location, object_lock):
     # Create bucket.
     buckets = client.list_buckets()
     if name not in buckets: 
@@ -87,7 +82,7 @@ def make_bucket(name, location, object_lock):
     else: 
         return "Bucket" + name + "already exists"
 
-def remove_bucket(name):
+def remove_bucket(client, name):
     buckets = client.list_buckets()
     if name in buckets: 
         client.remove_bucket(name)
@@ -100,8 +95,8 @@ def run_module():
     module_args = dict(
         name=dict(type='str', required=True),
         state=dict(type='str', default='present', choices=['present','absent']),
-        location=dict(type='str', default='us-east-1', choices=['us-east-1','us-east-2', 'us-west-1', 'us-west-2', 'ca-central-1', 'eu-west-1']),
-        object_lock=dict(type='bool', default='False')
+        access_key=dict(type='str', required=True),
+        secret_key=dict(type='str', required=True),
     )
 
     # seed the result dict in the object
@@ -123,6 +118,12 @@ def run_module():
         supports_check_mode=True
     )
 
+    client = Minio(
+        module.params['minio_url'],
+        access_key=module.params['access_key'],
+        secret_key=module.params['secret_key'],
+    )
+
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
     # state with no modifications
@@ -130,16 +131,18 @@ def run_module():
         module.exit_json(**result)
 
     if module.params['state'] == "present": 
-        make_bucket(module.params['name'], module.params['location'], module.params['object_lock'])
+        make_bucket(
+            client=client,
+            name=module.params['name'],
+            location=module.params['location'],
+            object_lock=module.params['object_lock']
+        )
 
     elif module.params['state'] == "absent": 
-        remove_bucket(module.params['name'])
-
-    # during the execution of the module, if there is an exception or a
-    # conditional state that effectively causes a failure, run
-    # AnsibleModule.fail_json() to pass in the message and the result
-    if module.params['name'] == 'fail me':
-        module.fail_json(msg='You requested this to fail', **result)
+        remove_bucket(
+            client=client, 
+            name=module.params['name']
+        )
 
     # in the event of a successful module execution, you will want to
     # simple AnsibleModule.exit_json(), passing the key/value results
