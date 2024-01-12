@@ -11,13 +11,13 @@ DOCUMENTATION = r'''
 ---
 module: bucket
 
-short_description: This is my test module
+short_description: A module for creating and removing buckets in Minio
 
 # If this is part of a collection, you need to use semantic versioning,
 # i.e. the version is of the form "2.5.0" and not "2.4".
 version_added: "1.0.0"
 
-description: This is my longer description explaining my test module.
+description: Create buckets! Remove buckets! All the bucket things!
 
 options:
     name:
