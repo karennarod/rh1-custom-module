@@ -12,21 +12,12 @@ components:
       args: ['tail', '-f', '/dev/null']
       env:
         - name: 'ANSIBLE_CONFIG'
-          value: '${PROJECTS_ROOT}/ansible.cfg'
+          value: '${PROJECT_SOURCE}/ansible.cfg'
 commands:
   - id: oc-install
     exec:
       commandLine: '/usr/local/bin/ansible-playbook ${PROJECT_SOURCE}/playbooks/install_oc.yml'
       workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: build
-        isDefault: true
-      component: tooling-container
-      
-  - id: initialize-ansible-config
-    exec:
-      commandLine: 'mv ${PROJECTS_ROOT}/rh1-custom-module/ansible.cfg ${PROJECTS_ROOT}/ansible.cfg'  
-      workingDir: ${PROJECTS_ROOT}
       group:
         kind: build
         isDefault: true
