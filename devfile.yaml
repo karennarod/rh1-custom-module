@@ -27,6 +27,10 @@ commands:
     exec:
       commandLine: 'mv /projects/rh1-custom-module/ansible.cfg /home/runner/ansible.cfg'  
       workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
+        isDefault: true
+      component: tooling-container
 
   - id: molecule-create
     exec:
