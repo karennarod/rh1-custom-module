@@ -12,7 +12,7 @@ components:
       args: ['tail', '-f', '/dev/null']
       env:
         - name: 'ANSIBLE_CONFIG'
-          value: '/home/runner/ansible.cfg'
+          value: '${PROJECTS_ROOT}/ansible.cfg'
 commands:
   - id: oc-install
     exec:
@@ -25,7 +25,7 @@ commands:
       
   - id: initialize-ansible-config
     exec:
-      commandLine: 'mv ${PROJECTS_ROOT}/rh1-custom-module/ansible.cfg ~/ansible.cfg'  
+      commandLine: 'mv ${PROJECTS_ROOT}/rh1-custom-module/ansible.cfg ${PROJECTS_ROOT}/ansible.cfg'  
       workingDir: ${PROJECTS_ROOT}
       group:
         kind: build
