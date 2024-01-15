@@ -28,7 +28,7 @@ commands:
       commandLine: 'mv /projects/rh1-custom-module/ansible.cfg /home/runner/ansible.cfg'  
       workingDir: ${PROJECT_SOURCE}
       group:
-        kind: run
+        kind: build
         isDefault: true
       component: tooling-container
 
