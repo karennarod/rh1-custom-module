@@ -25,8 +25,8 @@ commands:
       
   - id: initialize-ansible-config
     exec:
-      commandLine: 'cp /projects/rh1-custom-module/ansible.cfg /home/runner/ansible.cfg'  
-      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'mv ${PROJECTS_ROOT}/rh1-custom-module/ansible.cfg ~/ansible.cfg'  
+      workingDir: ${PROJECTS_ROOT}
       group:
         kind: build
         isDefault: true
