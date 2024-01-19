@@ -19,7 +19,7 @@ commands:
       commandLine: pip install -r ${PROJECT_SOURCE}/requirements.txt
       workingDir: ${PROJECT_SOURCE}
       group:
-        kind: build
+        kind: run
         isDefault: true
       component: tooling-container
       
@@ -29,66 +29,6 @@ commands:
       workingDir: ${PROJECT_SOURCE}
       group:
         kind: build
-        isDefault: true
-      component: tooling-container
-
-  - id: molecule-create
-    exec:
-      label: "1.Molecule: start a test pod for the automation"
-      commandLine: 'source $HOME/.bashrc && molecule create'
-      workingDir: ${PROJECTS_ROOT}/rh1-custom-module/collections/ansible_collections/sample_namespace/sample_collection/extensions
-      group:
-        kind: run
-        isDefault: true
-      component: tooling-container
-
-  - id: molecule-list
-    exec:
-      label: "2.Molecule: view the test instance that was created"
-      commandLine: 'source $HOME/.bashrc && molecule list'
-      workingDir: ${PROJECTS_ROOT}/rh1-custom-module/collections/ansible_collections/sample_namespace/sample_collection/extensions
-      group:
-        kind: run
-        isDefault: true
-      component: tooling-container
-
-  - id: molecule-verify
-    exec:
-      label: "3.Molecule: run the verification against the test pod"
-      commandLine: 'source $HOME/.bashrc && molecule verify'
-      workingDir: ${PROJECTS_ROOT}/rh1-custom-module/collections/ansible_collections/sample_namespace/sample_collection/extensions
-      group:
-        kind: run
-        isDefault: true
-      component: tooling-container
-
-  - id: molecule-converge
-    exec:
-      label: "4.Molecule: apply the role to the pod"
-      commandLine: 'source $HOME/.bashrc && molecule converge'
-      workingDir: ${PROJECTS_ROOT}/rh1-custom-module/collections/ansible_collections/sample_namespace/sample_collection/extensions
-      group:
-        kind: run
-        isDefault: true
-      component: tooling-container
-
-  - id: molecule-destroy
-    exec:
-      label: "5.Molecule: reset the test pod back to a fresh instance"
-      commandLine: 'source $HOME/.bashrc && molecule destroy'
-      workingDir: ${PROJECTS_ROOT}/rh1-custom-module/collections/ansible_collections/sample_namespace/sample_collection/extensions
-      group:
-        kind: run
-        isDefault: true
-      component: tooling-container
-
-  - id: molecule-test
-    exec:
-      label: "6.Molecule: run the full molecule test"
-      commandLine: 'source $HOME/.bashrc && molecule test'
-      workingDir: ${PROJECTS_ROOT}/rh1-custom-module/collections/ansible_collections/sample_namespace/sample_collection/extensions
-      group:
-        kind: run
         isDefault: true
       component: tooling-container
 
@@ -105,4 +45,5 @@ commands:
       component: tooling-container
 events:
   postStart:
+    - "install-dependencies"
     - "oc-install"
