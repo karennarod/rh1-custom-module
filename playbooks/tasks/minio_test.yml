@@ -3,7 +3,7 @@
 - name: Testing Bucket Creation & Removal
   hosts: localhost
   vars:
-    minio_url: "http://localhost:9000"
+    minio_url: "play.min.io"
     bucket_name: "ansible-test"
     object_name: "test-file-object"
     access_key: "minioadmin"
@@ -58,25 +58,26 @@
 
     #### Removing an object
     - name: Remove a file object
-      rh1.minio.bucket:
+      rh1.minio.object:
         minio_url: "{{ minio_url }}"
-        name: "{{ bucket_name }}"
-        object: "{{ object_name }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
-        
+        bucket: "{{ bucket_name }}"
+        object: "{{ object_name }}"
+        mode: remove
+
     - name: Print info
       ansible.builtin.debug:
         msg: "Object {{ object_name }} removed from bucket {{ bucket_name }}"
-    
+
     #### Deleting a bucket
     - name: Delete a bucket
       rh1.minio.bucket:
         minio_url: "{{ minio_url }}"
-        name: "{{ bucket_name }}"
-        state: absent
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
+        name: "{{ bucket_name }}"
+        state: absent
 
     - name: Print info
       ansible.builtin.debug:

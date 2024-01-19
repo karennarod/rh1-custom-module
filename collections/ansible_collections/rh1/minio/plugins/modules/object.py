@@ -5,6 +5,7 @@
 from __future__ import (absolute_import, division, print_function)
 from minio import Minio
 from minio.error import S3Error
+from minio.commonconfig import CopySource
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -40,21 +41,10 @@ author:
 '''
 
 EXAMPLES = r'''
-# Pass in a message
+# Create a bucket
 - name: Test with a message
-  my_namespace.my_collection.my_test:
-    name: hello world
-
-# pass in a message and have changed true
-- name: Test with a message and changed output
-  my_namespace.my_collection.my_test:
-    name: hello world
-    new: true
-
-# fail the module
-- name: Test failure of the module
-  my_namespace.my_collection.my_test:
-    name: fail me
+  rh1.minio.bucket:
+    name: rh1_bucket
 '''
 
 RETURN = r'''
@@ -85,14 +75,7 @@ def get_object(client, bucket, object):
 def put_object(client, bucket, object, src):
     # Put object.
     # Upload unknown sized data.
-    result = client.put_object(
-        bucket, object, src, length=-1, part_size=10*1024*1024,
-    )
-    print(
-        "created {0} object; etag: {1}, version-id: {2}".format(
-            result.object_name, result.etag, result.version_id,
-        ),
-    )
+    client.put_object( bucket, object, src, length=-1, part_size=10*1024*1024)
 
 def fget_object(client, bucket, object, dest):
     # Download an object file.
@@ -102,21 +85,33 @@ def fput_object(client, bucket, object, src):
     # Upload file 
     client.fput_object(bucket, object, src)
 
-def remove_object(client, name):
-    client.remove_object(name)
+def remove_object(client, bucket, object):
+    client.remove_object(bucket, object)
 
 def list_object(client, bucket):
     objects = client.list_objects(bucket)
     return objects
+
+def copy_object(client, bucket, object, src_bucket, src_object):
+    client.copy_object(bucket, object, CopySource(src_bucket, src_object))
+
+def stat_object(client, bucket, object):
+    stats = client.stat_object(bucket, object)
+    return stats
 
 def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
         bucket=dict(type='str', required=True),
         object=dict(type='str', required=True),
-        src=dict(type='str', required=False), #or data
+        src=dict(type='str', required=False), 
+        src_bucket=dict(type='str', required=False), 
+        src_object=dict(type='str', required=False), 
         dest=dict(type='str', required=False), 
         mode=dict(type='str', choices=['get','put', 'copy', 'list', 'remove', 'stat', 'fget', 'fput'], required=True),
+        access_key=dict(type='str', required=True),
+        secret_key=dict(type='str', required=True),
+        minio_url=dict(type='str', required=True),
     )
     # seed the result dict in the object
     # we primarily care about changed and state
@@ -188,7 +183,27 @@ def run_module():
             dest=module.params['dest']
         )
 
-#COPY LIST STAT 
+    elif module.params['mode'] == "list": 
+        fget_object(
+            client=client,
+            bucket=module.params['bucket'], 
+        )
+    
+    elif module.params['mode'] == "copy": 
+        fget_object(
+            client=client,
+            bucket=module.params['bucket'], 
+            object=module.params['object'], 
+            src_bucket=module.params['src_bucket'], 
+            src_object=module.params['src_object'], 
+        )
+
+    elif module.params['mode'] == "stat": 
+        fget_object(
+            client=client,
+            bucket=module.params['bucket'], 
+            object=module.params['object'], 
+        )
 
     # during the execution of the module, if there is an exception or a
     # conditional state that effectively causes a failure, run
