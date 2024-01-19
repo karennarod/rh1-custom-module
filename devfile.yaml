@@ -45,5 +45,5 @@ commands:
       component: tooling-container
 events:
   postStart:
-    # - "install-dependencies"
+    - "install-dependencies"
     - "oc-install"
