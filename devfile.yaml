@@ -14,6 +14,15 @@ components:
         - name: 'ANSIBLE_CONFIG'
           value: '${PROJECT_SOURCE}/ansible.cfg'
 commands:
+  - id: install-dependencies
+    exec:
+      commandLine: pip install -r ${PROJECT_SOURCE}/requirements.txt
+      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: build
+        isDefault: true
+      component: tooling-container
+
   - id: oc-install
     exec:
       commandLine: '/usr/local/bin/ansible-playbook ${PROJECT_SOURCE}/playbooks/install_oc.yml'
