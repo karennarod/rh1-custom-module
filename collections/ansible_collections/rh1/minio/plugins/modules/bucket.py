@@ -86,7 +86,7 @@ def remove_bucket(client, name):
     buckets = client.list_buckets()
     if name in buckets: 
         client.remove_bucket(name)
-        return "Bucket" + name + "was removed." 
+        return "Bucket" + name + "was removed."
     else: 
         return "Bucket" + name + "does not exist"
 
