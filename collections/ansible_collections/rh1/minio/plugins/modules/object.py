@@ -88,8 +88,8 @@ def remove_object(module, client, bucket, object):
 
 def list_object(module, client, bucket):
     try: 
-        objects = client.list_objects(bucket)
-        return True, objects
+        objects = [obj.object_name for obj in client.list_objects(bucket)]
+        return True, f'Existing MinIO objects in {bucket}: {objects}'
     except InvalidResponseError as e: 
         return False, str(e)
 
@@ -104,7 +104,7 @@ def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
         bucket=dict(type='str', required=True),
-        object=dict(type='str', required=True),
+        object=dict(type='str', required=False),
         src=dict(type='str', required=False), 
         src_bucket=dict(type='str', required=False), 
         src_object=dict(type='str', required=False), 

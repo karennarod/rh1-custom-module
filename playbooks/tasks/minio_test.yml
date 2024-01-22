@@ -54,22 +54,22 @@
       ansible.builtin.debug:
         var: fget_object_result['msg']
 
-    #### Copy an object
-    - name: Copy an existing file object
-      rh1.minio.object:
-        endpoint: "{{ endpoint }}"
-        access_key: "{{ access_key }}"
-        secret_key: "{{ secret_key }}"
-        bucket: "{{ bucket_name }}"
-        object: "hello_world"
-        src_bucket: "{{ bucket_name }}"
-        src_object: "{{ object_name }}"
-        mode: copy
-      register: copy_object_result
+    # #### Copy an object
+    # - name: Copy an existing file object
+    #   rh1.minio.object:
+    #     endpoint: "{{ endpoint }}"
+    #     access_key: "{{ access_key }}"
+    #     secret_key: "{{ secret_key }}"
+    #     bucket: "{{ bucket_name }}"
+    #     object: "hello_world"
+    #     src_bucket: "{{ bucket_name }}"
+    #     src_object: "{{ object_name }}"
+    #     mode: copy
+    #   register: copy_object_result
 
-    - name: Print copy_object message
-      ansible.builtin.debug:
-        var: copy_object_result['msg']
+    # - name: Print copy_object message
+    #   ansible.builtin.debug:
+    #     var: copy_object_result['msg']
 
     #### Removing an object
     - name: Remove a file object
@@ -85,6 +85,20 @@
     - name: Print info
       ansible.builtin.debug:
         var: remove_object_result['msg']
+
+    #### List objects
+    - name: List existing objects
+      rh1.minio.object:
+        endpoint: "{{ endpoint }}"
+        access_key: "{{ access_key }}"
+        secret_key: "{{ secret_key }}"
+        bucket: "{{ bucket_name }}"
+        mode: list
+      register: list_object_result
+
+    - name: Print list_object message
+      ansible.builtin.debug:
+        var: list_object_result['msg']
 
     #### Deleting a bucket
     - name: Delete a bucket
