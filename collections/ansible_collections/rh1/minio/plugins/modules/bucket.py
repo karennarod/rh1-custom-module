@@ -73,11 +73,11 @@ message:
 
 from ansible.module_utils.basic import AnsibleModule
 
-def make_bucket(client, name, location, object_lock):
+def make_bucket(client, name):
     # Create bucket.
     buckets = client.list_buckets()
     if name not in buckets: 
-        client.make_bucket(name, location, object_lock)
+        client.make_bucket(name)
         return "Bucket" + name + "was created." 
     else: 
         return "Bucket" + name + "already exists"
@@ -97,6 +97,7 @@ def run_module():
         state=dict(type='str', default='present', choices=['present','absent']),
         access_key=dict(type='str', required=True),
         secret_key=dict(type='str', required=True),
+        endpoint=dict(type='str', required=True),
     )
 
     # seed the result dict in the object
@@ -119,7 +120,7 @@ def run_module():
     )
 
     client = Minio(
-        module.params['minio_url'],
+        module.params['endpoint'],
         access_key=module.params['access_key'],
         secret_key=module.params['secret_key'],
     )
@@ -134,8 +135,6 @@ def run_module():
         make_bucket(
             client=client,
             name=module.params['name'],
-            location=module.params['location'],
-            object_lock=module.params['object_lock']
         )
 
     elif module.params['state'] == "absent": 

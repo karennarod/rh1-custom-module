@@ -3,77 +3,93 @@
 - name: Testing Bucket Creation & Removal
   hosts: localhost
   vars:
-    minio_url: "play.min.io"
+    endpoint: "play.min.io"
     bucket_name: "ansible-test"
     object_name: "test-file-object"
     access_key: "minioadmin"
     secret_key: "minioadmin"
   tasks:
-    - name: Print info
-      ansible.builtin.debug:
-        msg: "Testing Bucket Creation & Removal"
-
     #### Creating a bucket
     - name: Create a bucket
       rh1.minio.bucket:
-        minio_url: "{{ minio_url }}"
+        endpoint: "{{ endpoint }}"
         name: "{{ bucket_name }}"
         state: present
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
-    
+
     - name: Print info
       ansible.builtin.debug:
         msg: "Bucket {{ bucket_name }} created"
-    
+
     #### Creating an object
-    - name: Create a file object in the new bucket
+    - name: Upload a MinIO object to the new bucket
       rh1.minio.object:
-        minio_url: "{{ minio_url }}"
+        endpoint: "{{ endpoint }}"
         bucket: "{{ bucket_name }}"
         object: "{{ object_name }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
-        src: hello_world.txt
+        src: "hello_world.txt"
         mode: fput
+      register: fput_object_result
 
-    - name: Print info
+    - name: Print fput_object message
       ansible.builtin.debug:
-        msg: "Object {{ object_name }} created in bucket {{ bucket_name }}"
+        var: fput_object_result['msg']
 
     #### Downloading an object
     - name: Download a file object
       rh1.minio.object:
-        minio_url: "{{ minio_url }}"
+        endpoint: "{{ endpoint }}"
         bucket: "{{ bucket_name }}"
         object: "{{ object_name }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
         dest: "fresh_download_hello_world.txt"
         mode: fget
+      register: fget_object_result
 
-    - name: Print info
+    - name: Print fget_object message
       ansible.builtin.debug:
-        msg: "Object {{ object_name }} downloaded from bucket {{ bucket_name }} to destination ./fresh_download_hello_world.txt"
+        var: fget_object_result['msg']
+
+    #### Copy an object
+    - name: Copy an existing file object
+      rh1.minio.object:
+        endpoint: "{{ endpoint }}"
+        access_key: "{{ access_key }}"
+        secret_key: "{{ secret_key }}"
+        bucket: "{{ bucket_name }}"
+        object: "hello_world"
+        src_bucket: "{{ bucket_name }}"
+        src_object: "{{ object_name }}"
+        mode: copy
+      register: copy_object_result
+
+    - name: Print copy_object message
+      ansible.builtin.debug:
+        var: copy_object_result['msg']
 
     #### Removing an object
     - name: Remove a file object
       rh1.minio.object:
-        minio_url: "{{ minio_url }}"
+        endpoint: "{{ endpoint }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
         bucket: "{{ bucket_name }}"
         object: "{{ object_name }}"
         mode: remove
+      register: remove_object_result
 
     - name: Print info
       ansible.builtin.debug:
-        msg: "Object {{ object_name }} removed from bucket {{ bucket_name }}"
+        var: remove_object_result['msg']
 
     #### Deleting a bucket
     - name: Delete a bucket
       rh1.minio.bucket:
-        minio_url: "{{ minio_url }}"
+        endpoint: "{{ endpoint }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
         name: "{{ bucket_name }}"
