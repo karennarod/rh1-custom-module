@@ -13,7 +13,7 @@
     - name: Create a bucket
       rh1.minio.bucket:
         endpoint: "{{ endpoint }}"
-        name: "{{ bucket_name }}"
+        bucket_name: "{{ bucket_name }}"
         state: present
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
@@ -26,8 +26,8 @@
     - name: Upload a MinIO object to the new bucket
       rh1.minio.object:
         endpoint: "{{ endpoint }}"
-        bucket: "{{ bucket_name }}"
-        object: "{{ object_name }}"
+        bucket_name: "{{ bucket_name }}"
+        object_name: "{{ object_name }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
         src: "hello_world.txt"
@@ -42,8 +42,8 @@
     - name: Download a file object
       rh1.minio.object:
         endpoint: "{{ endpoint }}"
-        bucket: "{{ bucket_name }}"
-        object: "{{ object_name }}"
+        bucket_name: "{{ bucket_name }}"
+        object_name: "{{ object_name }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
         dest: "fresh_download_hello_world.txt"
@@ -77,8 +77,8 @@
         endpoint: "{{ endpoint }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
-        bucket: "{{ bucket_name }}"
-        object: "{{ object_name }}"
+        bucket_name: "{{ bucket_name }}"
+        object_name: "{{ object_name }}"
         mode: remove
       register: remove_object_result
 
@@ -92,7 +92,7 @@
         endpoint: "{{ endpoint }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
-        bucket: "{{ bucket_name }}"
+        bucket_name: "{{ bucket_name }}"
         mode: list
       register: list_object_result
 
@@ -106,7 +106,7 @@
         endpoint: "{{ endpoint }}"
         access_key: "{{ access_key }}"
         secret_key: "{{ secret_key }}"
-        name: "{{ bucket_name }}"
+        bucket_name: "{{ bucket_name }}"
         state: absent
 
     - name: Print info
