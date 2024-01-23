@@ -50,3 +50,5 @@ Go to the MinIO console (play.min.io) and log in with the provided credentials. 
 
 Take a few minutes to see how the module interacts with the playbook before moving on to the next steps. 
 
+
+
